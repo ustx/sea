@@ -9,9 +9,8 @@ import "./Initializable.sol";
 import "./MerkleLib.sol";
 
 
-/// @title Tron SEA (Safe and Efficient Airdrop) framework
+/// @title Tron SEA (Safe and Efficient Airdrop) platfrom
 /// @author USTX Team
-/// @dev
 
 contract TronSEA is Initializable{
 	using Roles for Roles.Role;
@@ -31,10 +30,6 @@ contract TronSEA is Initializable{
 
     bytes32 private _root;
 
-
-    //Last V1 variable
-    uint256 public version;
-
 	// Events
     event Claimed(address indexed user, uint256 amount);
     event AdminAdded(address indexed account);
@@ -44,8 +39,7 @@ contract TronSEA is Initializable{
 	* @dev initializer
 	*
 	*/
-    function initialize() public initializer {
-        version=1;
+    constructor() {
         _notEntered = true;
         _numAdmins=0;
 		_addAdmin(msg.sender);		//default admin
@@ -92,13 +86,7 @@ contract TronSEA is Initializable{
 	|        ReentrancyGuard            |
 	|__________________________________*/
 
-	/**
-     * @dev Prevents a contract from calling itself, directly or indirectly.
-     * Calling a `nonReentrant` function from another `nonReentrant`
-     * function is not supported. It is possible to prevent this from happening
-     * by making the `nonReentrant` function external, and make it call a
-     * `private` function that does the actual work.
-     */
+	//Prevents a contract from calling itself, directly or indirectly.
     modifier nonReentrant() {
         // On the first call to nonReentrant, _notEntered will be true
         require(_notEntered, "ReentrancyGuard: reentrant call");
@@ -115,34 +103,70 @@ contract TronSEA is Initializable{
 
     /* ========== VIEWS ========== */
 
-
+    //Verify Merkle proof and leaf reconstruction
     function verify(bytes32[] memory proof, address user, uint256 amount) public view returns(bool){
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(user, amount))));
         return MerkleLib.verify(proof, _root, leaf);
     }
 
+    //Verify Merlke proof, simple version
     function verifySimple(bytes32[] memory proof, bytes32 leaf) public view returns(bool){
         return MerkleLib.verify(proof, _root, leaf);
     }
 
-    /* ========== SETTERS ========== */
+    /* ========== ACTIONS ========== */
 
-    function claim(bytes32[] memory proof, address user, uint256 amount) public {
-        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(user, amount))));
+    //User claim function
+    function claim(bytes32[] memory proof, uint256 amount) public nonReentrant {
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
         require(MerkleLib.verify(proof, _root, leaf), "Invalid proof");
 
-        _token.transfer(user,amount);
-        emit Claimed(user,amount);
+        _token.transfer(msg.sender,amount);
+        emit Claimed(msg.sender,amount);
 
     }
 
+    /* ========== SETTERS ========== */
+
+    //Set Merkle root, onlyAdmin
     function setRoot(bytes32 root) public onlyAdmin {
         require(root!="", "Invalid root");
         _root = root;
     }
 
+    //Set airdrop token, onlyAdmin
     function setToken(address token) public onlyAdmin {
         require(token!=address(0), "Cannot be address 0");
         _token = IERC20(token);
+    }
+
+    /* ========== HOUSEKEEPING ========== */
+
+	//Withdraw lost tokens, onlyAdmin. If amount == 0, withdraw all
+	function withdrawToken(address tokenAddr, uint256 amount) public onlyAdmin returns(uint256) {
+	    require(tokenAddr != address(0), "INVALID_ADDRESS");
+
+		IERC20 token = IERC20(tokenAddr);
+
+		uint256 balance = amount;
+		if (amount==0) {
+		    balance = token.balanceOf(address(this));
+		}
+
+		token.transfer(msg.sender,balance);
+
+		return balance;
+	}
+
+    //Withdraw lost TRX, onlyAdmin. If amount == 0, withdraw all
+    function withdrawTrx(uint256 amount) public onlyAdmin returns(uint256){
+        uint256 balance = amount;
+		if (amount==0) {
+		    balance = address(this).balance;
+		}
+		address payable rec = payable(msg.sender);
+		(bool sent, ) = rec.call{value: balance}("");
+		require(sent, "Failed to send TRX");
+		return balance;
     }
 }
