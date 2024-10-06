@@ -5,14 +5,13 @@ pragma solidity ^0.8.6;
 
 import "./IERC20.sol";
 import "./Roles.sol";
-import "./Initializable.sol";
 import "./MerkleLib.sol";
 
 
 /// @title Tron SEA (Safe and Efficient Airdrop) platfrom
 /// @author USTX Team
 
-contract TronSEA is Initializable{
+contract TronSEA {
 	using Roles for Roles.Role;
 
 	/***********************************|
