@@ -29,6 +29,8 @@ contract TronSEA {
 
     bytes32 private _root;
 
+    mapping(address => bool) public isClaimed;
+
 	// Events
     event Claimed(address indexed user, uint256 amount);
     event AdminAdded(address indexed account);
@@ -115,13 +117,27 @@ contract TronSEA {
 
     /* ========== ACTIONS ========== */
 
-    //User claim function
+    //User claim function, caller is the recipient
     function claim(bytes32[] memory proof, uint256 amount) public nonReentrant {
+        require(!isClaimed[msg.sender], 'Already claimed.');
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
         require(MerkleLib.verify(proof, _root, leaf), "Invalid proof");
 
         _token.transfer(msg.sender,amount);
+        isClaimed[msg.sender] = true;
         emit Claimed(msg.sender,amount);
+
+    }
+
+    //User claim function, third party recipient
+    function claim(bytes32[] memory proof, address user, uint256 amount) public nonReentrant {
+        require(!isClaimed[user], 'Already claimed.');
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(user, amount))));
+        require(MerkleLib.verify(proof, _root, leaf), "Invalid proof");
+
+        _token.transfer(user,amount);
+        isClaimed[user] = true;
+        emit Claimed(user,amount);
 
     }
 
