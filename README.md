@@ -1,8 +1,8 @@
-Tron SEA public repository
+# Tron SEA public repository
 
-Contracts -> Solidity smart contracts
+* Contracts -> Solidity smart contracts
 
-PHP -> PHP code to implement the tree and Merkle proof generation
+* PHP -> PHP code to implement the tree and Merkle proof generation
 
 mTree.php -> creates the Merkle tree of the following distribution
 
@@ -23,3 +23,5 @@ mProof.php -> creates the Merkle proof for a specific user/amount pair
 e.g. mProof.php?user=TGpSjS9wg4tJRVv69bnCJCq9mGAmkMaSFC&amount=300000000
 
 returns the Merkle proof and root for the input pair
+
+*Requirements for php code execution IEXbase Tron php API https://github.com/iexbase/tron-api*
