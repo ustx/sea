@@ -1,8 +1,8 @@
 # Tron SEA public repository
 
-* Contracts -> Solidity smart contracts
+**Contracts -> Solidity smart contracts**
 
-* PHP -> PHP code to implement the tree and Merkle proof generation
+**PHP -> PHP code to implement the tree and Merkle proof generation**
 
 mTree.php -> creates the Merkle tree of the following distribution
 
