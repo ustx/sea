@@ -1,6 +1,6 @@
 # PHP backend support files
 
-** mTree.php -> outputs the hashed Merkle tree
+**mTree.php -> outputs the hashed Merkle tree**
 
 Data to be encoded is curretly inside the script file but in a production environment should be read from file
 
@@ -28,8 +28,6 @@ function hashLeaf($addr,$amount) {
 }
 ```
 
-**The leaf MUST be hashed twice**
-
-** mProof.php -> outputs the Merkle proof for a specific user/amount pair (must be in the tree)
+**mProof.php -> outputs the Merkle proof for a specific user/amount pair (must be in the tree)**
 
 The output is json formatted data including the proof in vector form and the Merkle root that must match the one loaded in the smart contract
