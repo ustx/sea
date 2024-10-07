@@ -24,4 +24,6 @@ e.g. mProof.php?user=TGpSjS9wg4tJRVv69bnCJCq9mGAmkMaSFC&amount=300000000
 
 returns the Merkle proof and root for the input pair
 
+*More details in the README.md inside php and contracts folder*
+
 *Requirements for php code execution IEXbase Tron php API https://github.com/iexbase/tron-api*
