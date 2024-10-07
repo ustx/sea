@@ -2,7 +2,7 @@
 require_once("vendor/autoload.php");
 use IEXBase\TronAPI\Support\{Base58Check, BigInteger, Keccak};
 
-//replace with read from file
+//json data can be read from file
 $ljson = '[
   {"user":"TJHYbk7q2EuMJJZeEF6cxPBEDg9kG1sR1j","amount":"100000000"},
   {"user":"TRc7JCUtMopM3sADYDj5KUBhzD1K3q1JsR","amount":"200000000"},
@@ -35,8 +35,8 @@ try {
 
       $phash = hashLeaf($user,$amount);
 
+      //change this if leaves are different from address/amount
       foreach ($leavesraw as $l) {
-
         $leafhash= hashLeaf($l->user,$l->amount);
         array_push($leaveshash,$leafhash);
       }
@@ -73,6 +73,7 @@ try {
         for ($i=0;$i<$levelc[$k];$i+=2){
           $idx=($leveli[$k]+$i);
           if ($idx+1<$levelc[$k]+$leveli[$k]){
+            //Commutative hash
             if (hex2bin($tree[$idx])<hex2bin($tree[$idx+1])){
               $tree[ceil($idx/2)]=Keccak::hash(hex2bin($tree[$idx].$tree[$idx+1]), 256);
             } else {
@@ -119,6 +120,7 @@ try {
     echo $e->getMessage();
 }
 
+//This is the function that needs to be changed if the data to be encoded is different from address/amount
 function hashLeaf($addr,$amount) {
   if(mb_strlen($addr) == 34 && mb_substr($addr, 0, 1) === 'T') {
     $tempadd= Base58Check::decode($addr,0,3);
@@ -134,6 +136,7 @@ function hashLeaf($addr,$amount) {
   $biga = gmp_init($amount);
   $stra = str_pad(gmp_strval($biga,16), 64, "0", STR_PAD_LEFT);
   $packet = hex2bin($hexadd.$stra);
+  //Double hash
   $leafhash = Keccak::hash(hex2bin(Keccak::hash($packet,256)),256);
 
   return $leafhash;
