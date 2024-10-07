@@ -6,7 +6,7 @@
 
 mTree.php -> creates the Merkle tree of the following distribution
 
-[
+`[
   {"user":"TJHYbk7q2EuMJJZeEF6cxPBEDg9kG1sR1j","amount":"100000000"},
   {"user":"TRc7JCUtMopM3sADYDj5KUBhzD1K3q1JsR","amount":"200000000"},
   {"user":"TGpSjS9wg4tJRVv69bnCJCq9mGAmkMaSFC","amount":"300000000"},
@@ -14,7 +14,7 @@ mTree.php -> creates the Merkle tree of the following distribution
   {"user":"TJriuKLDcDjHrKUZvaoQvX84zLT2vy5GJv","amount":"500000000"},
   {"user":"TAPobz7nvpNBJcqwv6zenuSGwscd47ToaN","amount":"500000000"},
   {"user":"TKWmf2LbTjS4esYd1XfbZi5FWsZfrAphPX","amount":"600000000"}
-]
+]`
 
 returns the hased Merkle tree
 
